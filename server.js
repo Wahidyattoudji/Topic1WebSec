@@ -4,13 +4,12 @@ const path = require("path");
 const app = express();
 const PORT = 3000;
 
-// Middleware to parse JSON requests
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "Client")));
 
 app.use(
   session({
-    secret: "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6", // Change this to something stronger in production
+    secret: "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
     resave: false,
     saveUninitialized: false,
   })
@@ -21,24 +20,18 @@ const users = [
   { username: "sohaib456", password: "456" },
 ];
 
-// Serve the login page
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "Client/index.html"));
 });
 
-// Home page protection with session
 app.get("/Pages/home.html", (req, res) => {
-  // Debug: log session info
-  console.log("Session info:", req.session.user);
-
   if (req.session.user) {
     res.sendFile(path.join(__dirname, "Client/Pages/home.html"));
   } else {
-    res.redirect("/"); // Redirect to login page if not logged in
+    res.redirect("/");
   }
 });
 
-// Handle login POST request
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
@@ -56,10 +49,8 @@ app.post("/login", (req, res) => {
     return res.status(401).json({ message: "Incorrect password" });
   }
 
-  // Success: store user in session
+  // Success
   req.session.user = { username: user.username };
-
-  // After successful login, send a success message
   res.status(200).json({ message: "Login successful" });
 });
 
