@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Login</h1>
+
+      <!-- رسالة النتيجة -->
+      <div id="messageBox" class="text-center mb-4 text-sm font-medium"></div>
+
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label for="username" class="block text-sm font-medium text-gray-700"
+            >Username</label
+          >
+          <input
+            type="text"
+            id="username"
+            required
+            class="mt-1 w-full p-2 border rounded-md"
+          />
+        </div>
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700"
+            >Password</label
+          >
+          <input
+            type="password"
+            id="password"
+            required
+            class="mt-1 w-full p-2 border rounded-md"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white p-2 rounded-md"
+        >
+          Login
+        </button>
+      </form>
+
+      <div class="mt-6 flex justify-between">
+        <a
+          href="Pages/userslist.html"
+          class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+          >Username List</a
+        >
+        <a
+          href="Pages/passwordslist.html"
+          class="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600 transition"
+          >Password List</a
+        >
+      </div>
+    </div>
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+
+          try {
+            const res = await fetch("/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ username, password }),
+            });
+
+            const result = await res.json();
+
+            if (res.ok) {
+              // On successful login, redirect to the home page
+              window.location.href = "/Pages/home.html";
+            } else {
+              // If there's an error, show the message
+              const messageBox = document.getElementById("messageBox");
+              messageBox.textContent = result.message;
+              messageBox.className =
+                "text-red-600 text-center mb-4 font-medium";
+            }
+          } catch (error) {
+            // Handle network or other errors
+            const messageBox = document.getElementById("messageBox");
+            messageBox.textContent = "Something went wrong!";
+            messageBox.className = "text-red-600 text-center mb-4 font-medium";
+          }
+        });
+    </script>
+  </body>
+</html>
